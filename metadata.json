@@ -1,0 +1,6 @@
+{
+  "name": "Sistema de Préstamos y Control de Pagos",
+  "description": "Sistema paso a paso para originación y gestión de préstamos en efectivo con tasas anuales personalizables, amortización mensual, control de mora y vencimientos, e impresión de tickets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

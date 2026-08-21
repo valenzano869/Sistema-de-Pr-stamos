@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Print styling for thermal tickets and receipts */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #printable-ticket, #printable-ticket * {
+      visibility: visible;
+    }
+    #printable-ticket {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 80mm;
+      margin: 0;
+      padding: 4mm;
+      background: white !important;
+      color: black !important;
+      box-shadow: none !important;
+    }
+    @page {
+      margin: 0;
+      size: auto;
+    }
+  }
+}
+
+.font-mono-ticket {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.8);
+}
+
