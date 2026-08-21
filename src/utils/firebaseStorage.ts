@@ -1,8 +1,8 @@
-import { doc, setDoc, onSnapshot, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, collection } from 'firebase/firestore';
 import { db, loansCollection, settingsCollection } from './firebase';
 import { Loan, CompanySettings } from '../types';
 import { syncLoanStatusWithCurrentDate } from './finance';
-import { DEFAULT_COMPANY_SETTINGS } from './storage'; // Import defaults
+import { DEFAULT_COMPANY_SETTINGS } from './storage';
 
 const SETTINGS_DOC_ID = 'company-settings';
 
@@ -39,15 +39,4 @@ export async function saveLoanToFirebase(loan: Loan) {
 export async function saveSettingsToFirebase(settings: CompanySettings) {
   const docRef = doc(settingsCollection, SETTINGS_DOC_ID);
   await setDoc(docRef, settings);
-}
-
-// Ensure seed data is migrated to Firebase if empty
-export async function initializeFirebaseData(localLoans: Loan[]) {
-  const snapshot = await getDocs(loansCollection);
-  if (snapshot.empty && localLoans && localLoans.length > 0) {
-    // Seed database with the local generated loans
-    for (const loan of localLoans) {
-      await saveLoanToFirebase(loan);
-    }
-  }
 }

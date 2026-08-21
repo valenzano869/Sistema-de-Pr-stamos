@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CompanySettings, Loan, PaymentRecord } from './types';
-import {
-  DEFAULT_COMPANY_SETTINGS,
-  loadCompanySettings,
-  loadLoans,
-} from './utils/storage';
+import { DEFAULT_COMPANY_SETTINGS } from './utils/storage';
 import {
   subscribeToLoans,
   subscribeToSettings,
   saveLoanToFirebase,
-  saveSettingsToFirebase,
-  initializeFirebaseData
+  saveSettingsToFirebase
 } from './utils/firebaseStorage';
-import { syncLoanStatusWithCurrentDate } from './utils/finance';
 import { Navbar, ActiveTab } from './components/Navbar';
 import { LoanList } from './components/LoanList';
 import { LoanDetail } from './components/LoanDetail';
@@ -22,9 +16,13 @@ import { DashboardMetrics } from './components/DashboardMetrics';
 import { PaymentModal } from './components/PaymentModal';
 import { TicketModal } from './components/TicketModal';
 import { SettingsModal } from './components/SettingsModal';
+import { Loader2 } from 'lucide-react';
 
 export default function App() {
   // State
+  const [isLoansLoaded, setIsLoansLoaded] = useState(false);
+  const [isSettingsLoaded, setIsSettingsLoaded] = useState(false);
+  
   const [loans, setLoans] = useState<Loan[]>([]);
   const [companySettings, setCompanySettings] = useState<CompanySettings>(DEFAULT_COMPANY_SETTINGS);
   const [activeTab, setActiveTab] = useState<ActiveTab>('loans');
@@ -46,29 +44,19 @@ export default function App() {
   useEffect(() => {
     const unsubscribeLoans = subscribeToLoans((firebaseLoans) => {
       setLoans(firebaseLoans);
+      setIsLoansLoaded(true);
     });
 
     const unsubscribeSettings = subscribeToSettings((settings) => {
       setCompanySettings(settings);
+      setIsSettingsLoaded(true);
     });
-
-    // Seed initial local data to Firebase if the collection is empty
-    const localLoans = loadLoans();
-    initializeFirebaseData(localLoans);
 
     return () => {
       unsubscribeLoans();
       unsubscribeSettings();
     };
   }, []);
-
-  // Sync loans whenever page is refreshed or day changes
-  const refreshLoansState = () => {
-    loans.forEach(async (l) => {
-      const refreshed = syncLoanStatusWithCurrentDate(l);
-      await saveLoanToFirebase(refreshed);
-    });
-  };
 
   // Find currently active loan in detail view
   const selectedLoan = loans.find((l) => l.id === selectedLoanId) || null;
@@ -135,6 +123,18 @@ export default function App() {
   };
 
   const overdueCount = loans.filter((l) => l.status === 'late').length;
+
+  if (!isLoansLoaded || !isSettingsLoaded) {
+    return (
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center font-sans">
+        <div className="flex flex-col items-center text-blue-600">
+          <Loader2 className="w-12 h-12 animate-spin mb-4" />
+          <h2 className="text-xl font-semibold text-slate-800">Conectando con la nube...</h2>
+          <p className="text-slate-500 mt-2">Cargando datos de la empresa y préstamos</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
