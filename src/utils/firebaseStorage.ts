@@ -33,10 +33,13 @@ export function subscribeToSettings(callback: (settings: CompanySettings) => voi
 
 export async function saveLoanToFirebase(loan: Loan) {
   const docRef = doc(loansCollection, loan.id);
-  await setDoc(docRef, loan);
+  // Remove undefined values to prevent Firebase "Unsupported field value" errors
+  const cleanLoan = JSON.parse(JSON.stringify(loan));
+  await setDoc(docRef, cleanLoan);
 }
 
 export async function saveSettingsToFirebase(settings: CompanySettings) {
   const docRef = doc(settingsCollection, SETTINGS_DOC_ID);
-  await setDoc(docRef, settings);
+  const cleanSettings = JSON.parse(JSON.stringify(settings));
+  await setDoc(docRef, cleanSettings);
 }

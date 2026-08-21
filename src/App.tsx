@@ -77,15 +77,20 @@ export default function App() {
   };
 
   const handleSaveNewLoan = async (newLoan: Loan) => {
-    await saveLoanToFirebase(newLoan);
-    setSelectedLoanId(newLoan.id);
-    setActiveTab('loans');
+    try {
+      await saveLoanToFirebase(newLoan);
+      setSelectedLoanId(newLoan.id);
+      setActiveTab('loans');
 
-    // Automatically open agreement ticket for the new loan
-    setTicketLoanTarget(newLoan);
-    setTicketPaymentRecord(null);
-    setTicketType('loan_agreement');
-    setIsTicketModalOpen(true);
+      // Automatically open agreement ticket for the new loan
+      setTicketLoanTarget(newLoan);
+      setTicketPaymentRecord(null);
+      setTicketType('loan_agreement');
+      setIsTicketModalOpen(true);
+    } catch (error) {
+      console.error("Error saving new loan to Firebase:", error);
+      alert("Hubo un error al guardar el préstamo. Por favor, intente de nuevo.");
+    }
   };
 
   const handleOpenPaymentModal = (loanToPay?: Loan, installmentNum?: number) => {
@@ -97,14 +102,19 @@ export default function App() {
   };
 
   const handlePaymentSuccess = async (paymentRecord: PaymentRecord, updatedLoan: Loan) => {
-    await saveLoanToFirebase(updatedLoan);
+    try {
+      await saveLoanToFirebase(updatedLoan);
 
-    // Close payment modal and open ticket modal with printed ticket
-    setIsPaymentModalOpen(false);
-    setTicketPaymentRecord(paymentRecord);
-    setTicketLoanTarget(updatedLoan);
-    setTicketType('payment');
-    setIsTicketModalOpen(true);
+      // Close payment modal and open ticket modal with printed ticket
+      setIsPaymentModalOpen(false);
+      setTicketPaymentRecord(paymentRecord);
+      setTicketLoanTarget(updatedLoan);
+      setTicketType('payment');
+      setIsTicketModalOpen(true);
+    } catch (error) {
+      console.error("Error saving payment to Firebase:", error);
+      alert("Hubo un error al registrar el pago. Por favor, intente de nuevo.");
+    }
   };
 
   const handleOpenTicketModal = (payment?: PaymentRecord, type: 'payment' | 'loan_agreement' = 'payment') => {
@@ -119,7 +129,12 @@ export default function App() {
   };
 
   const handleSaveSettings = async (newSettings: CompanySettings) => {
-    await saveSettingsToFirebase(newSettings);
+    try {
+      await saveSettingsToFirebase(newSettings);
+    } catch (error) {
+      console.error("Error saving settings to Firebase:", error);
+      alert("Hubo un error al guardar la configuración.");
+    }
   };
 
   const overdueCount = loans.filter((l) => l.status === 'late').length;

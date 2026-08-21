@@ -17,6 +17,7 @@ import {
   Clock,
   Sparkles,
   Info,
+  Loader2,
 } from 'lucide-react';
 import { AmortizationType, CompanySettings, Customer, Loan, PaymentFrequency } from '../types';
 import { formatCurrency, formatDate, generateAmortizationSchedule } from '../utils/finance';
@@ -25,7 +26,7 @@ import { generateNextLoanCode } from '../utils/storage';
 interface LoanWizardProps {
   companySettings: CompanySettings;
   existingLoans: Loan[];
-  onSaveLoan: (newLoan: Loan) => void;
+  onSaveLoan: (newLoan: Loan) => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -39,6 +40,7 @@ export const LoanWizard: React.FC<LoanWizardProps> = ({
 
   // Step state (1: Cliente, 2: Condiciones, 3: Cronograma, 4: Confirmación)
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   // Step 1: Customer Data
   const [customer, setCustomer] = useState<Partial<Customer>>({
@@ -125,55 +127,60 @@ export const LoanWizard: React.FC<LoanWizardProps> = ({
     setCurrentStep((prev) => Math.max(1, prev - 1));
   };
 
-  const handleSave = () => {
-    const loanCode = generateNextLoanCode(existingLoans);
-    const nowISO = new Date().toISOString();
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const loanCode = generateNextLoanCode(existingLoans);
+      const nowISO = new Date().toISOString();
 
-    const fullCustomer: Customer = {
-      id: `cust-${Date.now()}`,
-      fullName: customer.fullName || '',
-      documentId: customer.documentId || '',
-      phone: customer.phone || '',
-      email: customer.email || '',
-      address: customer.address || '',
-      guarantorName: customer.guarantorName || '',
-      guarantorPhone: customer.guarantorPhone || '',
-      guarantorDocumentId: customer.guarantorDocumentId || '',
-      notes: customer.notes || '',
-      createdAt: nowISO,
-    };
+      const fullCustomer: Customer = {
+        id: `cust-${Date.now()}`,
+        fullName: customer.fullName || '',
+        documentId: customer.documentId || '',
+        phone: customer.phone || '',
+        email: customer.email || '',
+        address: customer.address || '',
+        guarantorName: customer.guarantorName || '',
+        guarantorPhone: customer.guarantorPhone || '',
+        guarantorDocumentId: customer.guarantorDocumentId || '',
+        notes: customer.notes || '',
+        createdAt: nowISO,
+      };
 
-    const newLoan: Loan = {
-      id: `loan-${Date.now()}`,
-      loanCode,
-      customerId: fullCustomer.id,
-      customer: fullCustomer,
-      principal,
-      annualInterestRate: annualRate,
-      monthlyInterestRate: annualRate / 12,
-      termsCount,
-      frequency,
-      amortizationType,
-      disbursementDate,
-      firstPaymentDate,
-      gracePeriodDays,
-      lateInterestRateDaily,
-      fixedLateFee,
-      totalInterest: scheduleData.totalInterest,
-      totalToRepay: scheduleData.totalToRepay,
-      installmentBaseAmount: scheduleData.installmentBase,
-      installments: scheduleData.installments,
-      payments: [],
-      status: 'active',
-      totalPaid: 0,
-      outstandingBalance: scheduleData.totalToRepay,
-      totalLateFeeAccrued: 0,
-      createdAt: nowISO,
-      updatedAt: nowISO,
-      notes: loanNotes || undefined,
-    };
+      const newLoan: Loan = {
+        id: `loan-${Date.now()}`,
+        loanCode,
+        customerId: fullCustomer.id,
+        customer: fullCustomer,
+        principal,
+        annualInterestRate: annualRate,
+        monthlyInterestRate: annualRate / 12,
+        termsCount,
+        frequency,
+        amortizationType,
+        disbursementDate,
+        firstPaymentDate,
+        gracePeriodDays,
+        lateInterestRateDaily,
+        fixedLateFee,
+        totalInterest: scheduleData.totalInterest,
+        totalToRepay: scheduleData.totalToRepay,
+        installmentBaseAmount: scheduleData.installmentBase,
+        installments: scheduleData.installments,
+        payments: [],
+        status: 'active',
+        totalPaid: 0,
+        outstandingBalance: scheduleData.totalToRepay,
+        totalLateFeeAccrued: 0,
+        createdAt: nowISO,
+        updatedAt: nowISO,
+        notes: loanNotes || undefined,
+      };
 
-    onSaveLoan(newLoan);
+      await onSaveLoan(newLoan);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Steps definition
@@ -799,10 +806,15 @@ export const LoanWizard: React.FC<LoanWizardProps> = ({
               <button
                 type="button"
                 onClick={handleSave}
-                className="inline-flex items-center space-x-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
+                disabled={isSaving}
+                className="inline-flex items-center space-x-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>Aprobar y Desembolsar Préstamo</span>
+                {isSaving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4" />
+                )}
+                <span>{isSaving ? 'Guardando...' : 'Aprobar y Desembolsar Préstamo'}</span>
               </button>
             )}
           </div>
