@@ -108,29 +108,6 @@ export interface Loan {
   notes?: string;
 }
 
-export interface GoogleSheetsConfig {
-  spreadsheetId?: string;
-  spreadsheetUrl?: string;
-  spreadsheetTitle?: string;
-  autoSync: boolean;
-  lastSyncedAt?: string;
-  accessToken?: string;
-  tokenExpiresAt?: number;
-  userEmail?: string;
-  userName?: string;
-}
-
-export interface SyncResult {
-  success: boolean;
-  spreadsheetId: string;
-  spreadsheetUrl: string;
-  syncedLoansCount: number;
-  syncedInstallmentsCount: number;
-  syncedPaymentsCount: number;
-  syncedAt: string;
-  error?: string;
-}
-
 export interface CompanySettings {
   name: string;
   legalId: string; // RFC / RUC / CIF
@@ -145,7 +122,6 @@ export interface CompanySettings {
   ticketFooter: string;
   ticketNotice: string;
   logoUrl?: string;
-  googleSheets?: GoogleSheetsConfig;
 }
 
 export interface LoanSimulationParams {

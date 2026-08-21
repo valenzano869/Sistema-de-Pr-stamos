@@ -10,11 +10,10 @@ import {
   RefreshCw,
   Check,
   Shield,
-  FileSpreadsheet,
-  ExternalLink,
 } from 'lucide-react';
 import { CompanySettings, Loan } from '../types';
-import { DEFAULT_COMPANY_SETTINGS, saveCompanySettings, saveLoans } from '../utils/storage';
+import { DEFAULT_COMPANY_SETTINGS } from '../utils/storage';
+import { saveLoanToFirebase, saveSettingsToFirebase } from '../utils/firebaseStorage';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -69,17 +68,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       try {
         const parsed = JSON.parse(event.target?.result as string);
         if (parsed.loans && Array.isArray(parsed.loans)) {
-          saveLoans(parsed.loans);
+          // Save to Firebase
+          for (const loan of parsed.loans) {
+            await saveLoanToFirebase(loan);
+          }
           onReloadLoans(parsed.loans);
           if (parsed.companySettings) {
-            saveCompanySettings(parsed.companySettings);
+            await saveSettingsToFirebase(parsed.companySettings);
             onSaveSettings(parsed.companySettings);
           }
-          alert('¡Copia de seguridad restaurada con éxito!');
+          alert('¡Copia de seguridad restaurada con éxito en la nube!');
           onClose();
         } else {
           alert('Archivo de copia no válido');
@@ -240,57 +242,6 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 onChange={(e) => setFormData({ ...formData, ticketNotice: e.target.value })}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs"
               />
-            </div>
-          </div>
-
-          {/* Google Sheets Integration in Settings */}
-          <div className="space-y-3 pt-3 border-t border-slate-200">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>Sincronización en la Nube con Google Sheets</span>
-            </h4>
-
-            <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-emerald-950">
-                  {formData.googleSheets?.spreadsheetId ? 'Hoja Conectada' : 'No conectada a Google Drive'}
-                </span>
-                {formData.googleSheets?.spreadsheetUrl && (
-                  <a
-                    href={formData.googleSheets.spreadsheetUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[11px] font-bold text-emerald-700 hover:underline inline-flex items-center space-x-1"
-                  >
-                    <span>Ver en Drive</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
-              </div>
-
-              {formData.googleSheets?.userEmail && (
-                <p className="text-[11px] text-emerald-800">
-                  Cuenta activa: <strong>{formData.googleSheets.userEmail}</strong>
-                </p>
-              )}
-
-              <div className="flex items-center justify-between text-xs pt-1">
-                <label className="text-[11px] font-medium text-slate-700">Auto-sincronizar cambios:</label>
-                <input
-                  type="checkbox"
-                  checked={formData.googleSheets?.autoSync ?? true}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      googleSheets: {
-                        ...(formData.googleSheets || { autoSync: true }),
-                        autoSync: e.target.checked,
-                      },
-                    })
-                  }
-                  className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500"
-                />
-              </div>
             </div>
           </div>
 

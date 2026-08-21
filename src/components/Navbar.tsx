@@ -6,8 +6,7 @@ import {
   Calculator,
   PieChart,
   Settings,
-  FileSpreadsheet,
-  CheckCircle2,
+  Receipt,
 } from 'lucide-react';
 import { CompanySettings } from '../types';
 
@@ -18,10 +17,8 @@ interface NavbarProps {
   onTabChange: (tab: ActiveTab) => void;
   companySettings: CompanySettings;
   onOpenSettings: () => void;
-  onOpenSheets: () => void;
   onNewLoan: () => void;
   overdueCount: number;
-  isSyncingSheets?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -29,13 +26,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   companySettings,
   onOpenSettings,
-  onOpenSheets,
   onNewLoan,
   overdueCount,
-  isSyncingSheets,
 }) => {
-  const isSheetsConnected = !!companySettings.googleSheets?.spreadsheetId;
-
   return (
     <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,29 +112,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center space-x-2">
-            {/* Google Sheets Sync Button */}
-            <button
-              type="button"
-              onClick={onOpenSheets}
-              className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
-                isSheetsConnected
-                  ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/80'
-                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700'
-              }`}
-              title="Sincronización con Google Sheets"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-              <span className="hidden sm:inline">Google Sheets</span>
-              {isSheetsConnected && (
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              )}
-            </button>
-
+          <div className="flex items-center space-x-2.5">
             <button
               type="button"
               onClick={onNewLoan}
-              className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all"
+              className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all"
             >
               <Plus className="w-4 h-4" />
               <span>Nuevo Préstamo</span>
@@ -202,17 +177,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <PieChart className="w-4 h-4 mb-0.5" />
             <span>Reportes</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={onOpenSheets}
-            className={`flex flex-col items-center py-1 px-2 rounded-lg ${
-              isSheetsConnected ? 'text-emerald-400 font-bold' : 'text-slate-400'
-            }`}
-          >
-            <FileSpreadsheet className="w-4 h-4 mb-0.5" />
-            <span>Sheets</span>
           </button>
         </div>
       </div>

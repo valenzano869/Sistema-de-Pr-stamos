@@ -14,8 +14,6 @@ import {
   Printer,
   Sparkles,
   TrendingUp,
-  FileSpreadsheet,
-  ExternalLink,
 } from 'lucide-react';
 import { CompanySettings, Loan, LoanStatus } from '../types';
 import { formatCurrency, formatDate } from '../utils/finance';
@@ -26,7 +24,6 @@ interface LoanListProps {
   onSelectLoan: (loan: Loan) => void;
   onNewLoan: () => void;
   onQuickPayment: (loan: Loan) => void;
-  onOpenSheets?: () => void;
 }
 
 export const LoanList: React.FC<LoanListProps> = ({
@@ -35,7 +32,6 @@ export const LoanList: React.FC<LoanListProps> = ({
   onSelectLoan,
   onNewLoan,
   onQuickPayment,
-  onOpenSheets,
 }) => {
   const currency = companySettings.currency || '$';
   const [searchTerm, setSearchTerm] = useState('');
@@ -201,20 +197,6 @@ export const LoanList: React.FC<LoanListProps> = ({
           >
             Liquidados ({paidCount})
           </button>
-
-          {onOpenSheets && (
-            <button
-              type="button"
-              onClick={onOpenSheets}
-              className="ml-auto inline-flex items-center space-x-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition-colors"
-              title="Ver o sincronizar con Google Sheets"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
-              <span>
-                {companySettings.googleSheets?.spreadsheetId ? 'Google Sheets (Conectado)' : 'Sincronizar Sheets'}
-              </span>
-            </button>
-          )}
         </div>
       </div>
 

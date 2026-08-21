@@ -18,12 +18,6 @@ export const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
   defaultGraceDays: 3, // 3 días de tolerancia
   ticketFooter: '¡Gracias por su puntualidad en sus pagos!',
   ticketNotice: 'Conserve este ticket como su comprobante oficial de pago.',
-  googleSheets: {
-    spreadsheetId: '1Jidwpe0RgA05Qksrcs2wsBcZDutoHbbda04wtXk86Ww',
-    spreadsheetUrl: 'https://docs.google.com/spreadsheets/d/1Jidwpe0RgA05Qksrcs2wsBcZDutoHbbda04wtXk86Ww/edit',
-    spreadsheetTitle: 'Cartera de Préstamos Google Sheets',
-    autoSync: true,
-  },
 };
 
 /**
@@ -261,15 +255,27 @@ function createSeedLoans(): Loan[] {
 }
 
 export function loadLoans(): Loan[] {
-  // Enforced by user: strictly bypass local storage for loans
-  // We return seed loans if the app is entirely empty to allow initial setup
-  return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_LOANS);
+    if (!raw) {
+      const seed = createSeedLoans();
+      saveLoans(seed);
+      return seed;
+    }
+    const parsed = JSON.parse(raw);
+    return parsed.map((l: any) => syncLoanStatusWithCurrentDate(l));
+  } catch (err) {
+    console.error('Failed to load loans from storage', err);
+    return createSeedLoans();
+  }
 }
 
 export function saveLoans(loans: Loan[]): void {
-  // Enforced by user: strictly bypass local storage for loans
-  // Changes are persisted directly to Google Sheets via auto-sync
-  localStorage.removeItem(STORAGE_KEY_LOANS);
+  try {
+    localStorage.setItem(STORAGE_KEY_LOANS, JSON.stringify(loans));
+  } catch (err) {
+    console.error('Failed to save loans to storage', err);
+  }
 }
 
 export function loadCompanySettings(): CompanySettings {
@@ -279,14 +285,7 @@ export function loadCompanySettings(): CompanySettings {
       saveCompanySettings(DEFAULT_COMPANY_SETTINGS);
       return DEFAULT_COMPANY_SETTINGS;
     }
-    const parsed = JSON.parse(raw);
-    const mergedGoogleSheets = {
-      ...DEFAULT_COMPANY_SETTINGS.googleSheets,
-      ...(parsed.googleSheets || {}),
-      spreadsheetId: parsed.googleSheets?.spreadsheetId || DEFAULT_COMPANY_SETTINGS.googleSheets?.spreadsheetId,
-      spreadsheetUrl: parsed.googleSheets?.spreadsheetUrl || DEFAULT_COMPANY_SETTINGS.googleSheets?.spreadsheetUrl,
-    };
-    return { ...DEFAULT_COMPANY_SETTINGS, ...parsed, googleSheets: mergedGoogleSheets };
+    return { ...DEFAULT_COMPANY_SETTINGS, ...JSON.parse(raw) };
   } catch {
     return DEFAULT_COMPANY_SETTINGS;
   }

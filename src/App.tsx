@@ -4,9 +4,14 @@ import {
   DEFAULT_COMPANY_SETTINGS,
   loadCompanySettings,
   loadLoans,
-  saveCompanySettings,
-  saveLoans,
 } from './utils/storage';
+import {
+  subscribeToLoans,
+  subscribeToSettings,
+  saveLoanToFirebase,
+  saveSettingsToFirebase,
+  initializeFirebaseData
+} from './utils/firebaseStorage';
 import { syncLoanStatusWithCurrentDate } from './utils/finance';
 import { Navbar, ActiveTab } from './components/Navbar';
 import { LoanList } from './components/LoanList';
@@ -17,8 +22,6 @@ import { DashboardMetrics } from './components/DashboardMetrics';
 import { PaymentModal } from './components/PaymentModal';
 import { TicketModal } from './components/TicketModal';
 import { SettingsModal } from './components/SettingsModal';
-import { GoogleSheetsSyncModal } from './components/GoogleSheetsSyncModal';
-import { syncLoansToSpreadsheet } from './utils/googleSheets';
 
 export default function App() {
   // State
@@ -38,77 +41,33 @@ export default function App() {
   const [ticketType, setTicketType] = useState<'payment' | 'loan_agreement'>('payment');
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isSheetsModalOpen, setIsSheetsModalOpen] = useState(false);
-  const [isSyncingSheets, setIsSyncingSheets] = useState(false);
-  const [isLoadingInitial, setIsLoadingInitial] = useState(true);
 
-  // Initialize data on load
+  // Initialize data from Firebase on load
   useEffect(() => {
-    const initData = async () => {
-      const loadedSettings = loadCompanySettings();
-      setCompanySettings(loadedSettings);
+    const unsubscribeLoans = subscribeToLoans((firebaseLoans) => {
+      setLoans(firebaseLoans);
+    });
 
-      const sheets = loadedSettings.googleSheets;
-      let loadedFromSheets = false;
-      
-      if (sheets?.spreadsheetId && sheets?.accessToken) {
-        try {
-          const { fetchLoansFromSpreadsheet } = await import('./utils/googleSheets');
-          const fetchedLoans = await fetchLoansFromSpreadsheet(sheets.spreadsheetId, sheets.accessToken);
-          if (fetchedLoans.length > 0) {
-            setLoans(fetchedLoans.map((l) => syncLoanStatusWithCurrentDate(l)));
-            loadedFromSheets = true;
-          }
-        } catch (err: any) {
-          console.warn('Failed to load from Google Sheets', err);
-        }
-      }
-      
-      // Fallback only if sheets failed or was empty, though user prefers sheets
-      if (!loadedFromSheets) {
-        const loadedLoans = loadLoans();
-        setLoans(loadedLoans.map((l) => syncLoanStatusWithCurrentDate(l)));
-      }
-      
-      setIsLoadingInitial(false);
+    const unsubscribeSettings = subscribeToSettings((settings) => {
+      setCompanySettings(settings);
+    });
+
+    // Seed initial local data to Firebase if the collection is empty
+    const localLoans = loadLoans();
+    initializeFirebaseData(localLoans);
+
+    return () => {
+      unsubscribeLoans();
+      unsubscribeSettings();
     };
-    initData();
   }, []);
-
-  // Background auto-sync to Google Sheets if configured
-  const triggerAutoSyncIfEnabled = async (updatedLoans: Loan[], settings: CompanySettings) => {
-    const sheets = settings.googleSheets;
-    if (sheets?.autoSync && sheets?.spreadsheetId && sheets?.accessToken) {
-      try {
-        setIsSyncingSheets(true);
-        const result = await syncLoansToSpreadsheet(
-          updatedLoans,
-          settings,
-          sheets.spreadsheetId,
-          sheets.accessToken
-        );
-        const updatedSettings: CompanySettings = {
-          ...settings,
-          googleSheets: {
-            ...sheets,
-            lastSyncedAt: result.syncedAt,
-          },
-        };
-        setCompanySettings(updatedSettings);
-        saveCompanySettings(updatedSettings);
-      } catch (err) {
-        console.warn('Auto-sync to Google Sheets skipped or requires token renewal:', err);
-      } finally {
-        setIsSyncingSheets(false);
-      }
-    }
-  };
 
   // Sync loans whenever page is refreshed or day changes
   const refreshLoansState = () => {
-    const refreshed = loans.map((l) => syncLoanStatusWithCurrentDate(l));
-    setLoans(refreshed);
-    triggerAutoSyncIfEnabled(refreshed, companySettings);
+    loans.forEach(async (l) => {
+      const refreshed = syncLoanStatusWithCurrentDate(l);
+      await saveLoanToFirebase(refreshed);
+    });
   };
 
   // Find currently active loan in detail view
@@ -129,9 +88,8 @@ export default function App() {
     setActiveTab('wizard');
   };
 
-  const handleSaveNewLoan = (newLoan: Loan) => {
-    const updatedList = [newLoan, ...loans];
-    setLoans(updatedList);
+  const handleSaveNewLoan = async (newLoan: Loan) => {
+    await saveLoanToFirebase(newLoan);
     setSelectedLoanId(newLoan.id);
     setActiveTab('loans');
 
@@ -140,9 +98,6 @@ export default function App() {
     setTicketPaymentRecord(null);
     setTicketType('loan_agreement');
     setIsTicketModalOpen(true);
-
-    // Auto sync to Google Sheets (acts as database write)
-    triggerAutoSyncIfEnabled(updatedList, companySettings);
   };
 
   const handleOpenPaymentModal = (loanToPay?: Loan, installmentNum?: number) => {
@@ -153,10 +108,8 @@ export default function App() {
     setIsPaymentModalOpen(true);
   };
 
-  const handlePaymentSuccess = (paymentRecord: PaymentRecord, updatedLoan: Loan) => {
-    // Update loans list
-    const updatedList = loans.map((l) => (l.id === updatedLoan.id ? updatedLoan : l));
-    setLoans(updatedList);
+  const handlePaymentSuccess = async (paymentRecord: PaymentRecord, updatedLoan: Loan) => {
+    await saveLoanToFirebase(updatedLoan);
 
     // Close payment modal and open ticket modal with printed ticket
     setIsPaymentModalOpen(false);
@@ -164,9 +117,6 @@ export default function App() {
     setTicketLoanTarget(updatedLoan);
     setTicketType('payment');
     setIsTicketModalOpen(true);
-
-    // Auto sync to Google Sheets
-    triggerAutoSyncIfEnabled(updatedList, companySettings);
   };
 
   const handleOpenTicketModal = (payment?: PaymentRecord, type: 'payment' | 'loan_agreement' = 'payment') => {
@@ -180,24 +130,11 @@ export default function App() {
     setActiveTab('wizard');
   };
 
-  const handleSaveSettings = (newSettings: CompanySettings) => {
-    setCompanySettings(newSettings);
-    saveCompanySettings(newSettings);
+  const handleSaveSettings = async (newSettings: CompanySettings) => {
+    await saveSettingsToFirebase(newSettings);
   };
 
   const overdueCount = loans.filter((l) => l.status === 'late').length;
-
-  if (isLoadingInitial) {
-    return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center font-sans">
-        <div className="text-center space-y-4">
-          <div className="w-12 h-12 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <h2 className="text-xl font-bold text-slate-800">Cargando base de datos...</h2>
-          <p className="text-sm text-slate-500">Conectando con Google Sheets para sincronizar información.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans antialiased selection:bg-blue-600 selection:text-white">
@@ -212,10 +149,8 @@ export default function App() {
         }}
         companySettings={companySettings}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenSheets={() => setIsSheetsModalOpen(true)}
         onNewLoan={handleNewLoan}
         overdueCount={overdueCount}
-        isSyncingSheets={isSyncingSheets}
       />
 
       {/* Main Container */}
@@ -238,7 +173,6 @@ export default function App() {
                 onSelectLoan={handleSelectLoan}
                 onNewLoan={handleNewLoan}
                 onQuickPayment={(loan) => handleOpenPaymentModal(loan)}
-                onOpenSheets={() => setIsSheetsModalOpen(true)}
               />
             )}
           </>
@@ -302,15 +236,6 @@ export default function App() {
         onSaveSettings={handleSaveSettings}
         allLoans={loans}
         onReloadLoans={(newLoans) => setLoans(newLoans)}
-      />
-
-      {/* 4. Google Sheets Sync Modal */}
-      <GoogleSheetsSyncModal
-        isOpen={isSheetsModalOpen}
-        onClose={() => setIsSheetsModalOpen(false)}
-        loans={loans}
-        companySettings={companySettings}
-        onUpdateSettings={handleSaveSettings}
       />
     </div>
   );
