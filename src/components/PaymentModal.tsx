@@ -48,7 +48,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [lateFeeCharged, setLateFeeCharged] = useState<number>(calculatedLateFee);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'transfer' | 'card' | 'other'>('cash');
   const [referenceNumber, setReferenceNumber] = useState('');
-  const [cashReceived, setCashReceived] = useState<string>('');
   const [collectedBy, setCollectedBy] = useState('Caja Principal - Administrador');
   const [notes, setNotes] = useState('');
 
@@ -56,17 +55,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   React.useEffect(() => {
     if (currentInst) {
       setLateFeeCharged(currentInst.lateFeeCalculated || 0);
-      setCashReceived('');
     }
   }, [currentInst]);
 
   const totalToPay = Math.max(0, baseDue + lateFeeCharged);
-  const numCashReceived = parseFloat(cashReceived) || 0;
-  const changeGiven = paymentMethod === 'cash' && numCashReceived >= totalToPay ? numCashReceived - totalToPay : 0;
-
-  const handleQuickCash = (amount: number) => {
-    setCashReceived(String(amount));
-  };
 
   const handlePay = (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,8 +110,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       totalAmountPaid: totalToPay,
       paymentMethod,
       referenceNumber: referenceNumber || undefined,
-      cashReceived: paymentMethod === 'cash' && numCashReceived ? numCashReceived : undefined,
-      changeGiven: paymentMethod === 'cash' ? changeGiven : undefined,
       notes: notes || undefined,
       collectedBy,
       remainingLoanBalance: Math.max(0, currentInst.remainingBalance),
@@ -312,58 +302,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
           </div>
 
-          {/* Cash Change Calculator */}
-          {paymentMethod === 'cash' ? (
-            <div className="p-4 bg-emerald-50/50 border border-emerald-200 rounded-xl space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-700 flex items-center space-x-1">
-                  <Calculator className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Efectivo Entregado por el Cliente:</span>
-                </label>
-                <div className="relative w-36">
-                  <span className="absolute left-2.5 top-2 text-xs font-bold text-slate-400">{currency}</span>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min={totalToPay}
-                    placeholder={totalToPay.toFixed(2)}
-                    value={cashReceived}
-                    onChange={(e) => setCashReceived(e.target.value)}
-                    className="w-full pl-6 pr-2.5 py-1.5 bg-white border border-emerald-300 rounded-lg text-right font-bold text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
-              </div>
-
-              {/* Quick bill shortcuts */}
-              <div className="flex items-center space-x-2 text-xs">
-                <span className="text-slate-500 text-[11px]">Billetes:</span>
-                {[
-                  Math.ceil(totalToPay / 100) * 100,
-                  Math.ceil(totalToPay / 500) * 500,
-                  Math.ceil(totalToPay / 1000) * 1000,
-                ]
-                  .filter((v, idx, arr) => v >= totalToPay && arr.indexOf(v) === idx)
-                  .map((bill) => (
-                    <button
-                      key={bill}
-                      type="button"
-                      onClick={() => handleQuickCash(bill)}
-                      className="px-2 py-0.5 bg-white hover:bg-emerald-100 border border-emerald-300 rounded text-emerald-800 font-mono text-[11px] transition-colors"
-                    >
-                      +{formatCurrency(bill, currency)}
-                    </button>
-                  ))}
-              </div>
-
-              {/* Change calculation */}
-              <div className="flex justify-between items-center pt-2 border-t border-emerald-200">
-                <span className="text-xs font-bold text-slate-700">Cambio a Devolver:</span>
-                <span className="text-lg font-bold font-mono text-emerald-800">
-                  {formatCurrency(changeGiven, currency)}
-                </span>
-              </div>
-            </div>
-          ) : (
+          {/* Reference for non-cash payments */}
+          {paymentMethod !== 'cash' && (
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Número de Operación / Referencia Bancaria

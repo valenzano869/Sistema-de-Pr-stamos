@@ -1,13 +1,19 @@
 import { Loan, CompanySettings } from '../types';
 
 export const DEFAULT_COMPANY_SETTINGS: CompanySettings = {
-  companyName: 'PrestaFácil S.A.',
+  name: 'Préstamos Fácil',
+  legalId: 'RFC-123456789',
   phone: '+1 800 555 1234',
+  email: 'contacto@prestamosfacil.com',
   address: 'Av. Principal 123, Ciudad Central',
-  email: 'contacto@prestafacil.com',
-  logoUrl: 'https://images.unsplash.com/photo-1550565118-3a14e8d0386f?auto=format&fit=crop&q=80&w=256&h=256',
-  currency: 'MXN',
-  theme: 'light'
+  currency: '$',
+  currencyCode: 'MXN',
+  defaultAnnualRate: 36,
+  defaultLateRateDaily: 0.2,
+  defaultGraceDays: 3,
+  ticketFooter: 'Gracias por su pago.',
+  ticketNotice: 'Conserve este ticket para cualquier aclaración.',
+  logoUrl: '/logo.svg',
 };
 
 export function generateNextTicketNumber(loans: Loan[]): string {

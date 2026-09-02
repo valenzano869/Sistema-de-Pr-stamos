@@ -5,7 +5,8 @@ import {
   subscribeToLoans,
   subscribeToSettings,
   saveLoanToFirebase,
-  saveSettingsToFirebase
+  saveSettingsToFirebase,
+  deleteLoanFromFirebase
 } from './utils/firebaseStorage';
 import { Navbar, ActiveTab } from './components/Navbar';
 import { LoanList } from './components/LoanList';
@@ -45,6 +46,17 @@ export default function App() {
     const unsubscribeLoans = subscribeToLoans((firebaseLoans) => {
       setLoans(firebaseLoans);
       setIsLoansLoaded(true);
+
+      // Check if URL has ?loan= or ?loanId= to open directly when sharing link
+      const params = new URLSearchParams(window.location.search);
+      const loanFromUrl = params.get('loan') || params.get('loanId');
+      if (loanFromUrl) {
+        const found = firebaseLoans.find((l) => l.id === loanFromUrl || l.loanCode.toLowerCase() === loanFromUrl.toLowerCase());
+        if (found) {
+          setSelectedLoanId(found.id);
+          setActiveTab('loans');
+        }
+      }
     });
 
     const unsubscribeSettings = subscribeToSettings((settings) => {
@@ -65,15 +77,26 @@ export default function App() {
   const handleSelectLoan = (loan: Loan) => {
     setSelectedLoanId(loan.id);
     setActiveTab('loans');
+    const url = new URL(window.location.href);
+    url.searchParams.set('loan', loan.loanCode);
+    window.history.replaceState({}, '', url.toString());
   };
 
   const handleBackToLoanList = () => {
     setSelectedLoanId(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('loan');
+    url.searchParams.delete('loanId');
+    window.history.replaceState({}, '', url.toString());
   };
 
   const handleNewLoan = () => {
     setSelectedLoanId(null);
     setActiveTab('wizard');
+    const url = new URL(window.location.href);
+    url.searchParams.delete('loan');
+    url.searchParams.delete('loanId');
+    window.history.replaceState({}, '', url.toString());
   };
 
   const handleSaveNewLoan = async (newLoan: Loan) => {
@@ -90,6 +113,18 @@ export default function App() {
     } catch (error) {
       console.error("Error saving new loan to Firebase:", error);
       alert("Hubo un error al guardar el préstamo. Por favor, intente de nuevo.");
+    }
+  };
+
+  const handleDeleteLoan = async (loanId: string) => {
+    try {
+      await deleteLoanFromFirebase(loanId);
+      if (selectedLoanId === loanId) {
+        setSelectedLoanId(null);
+      }
+    } catch (error) {
+      console.error("Error deleting loan:", error);
+      alert("Hubo un error al eliminar el préstamo.");
     }
   };
 
@@ -164,7 +199,6 @@ export default function App() {
         }}
         companySettings={companySettings}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onNewLoan={handleNewLoan}
         overdueCount={overdueCount}
       />
 
@@ -180,14 +214,15 @@ export default function App() {
                 onBack={handleBackToLoanList}
                 onOpenPaymentModal={(instNum) => handleOpenPaymentModal(selectedLoan, instNum)}
                 onOpenTicketModal={handleOpenTicketModal}
+                onDeleteLoan={handleDeleteLoan}
               />
             ) : (
               <LoanList
                 loans={loans}
                 companySettings={companySettings}
                 onSelectLoan={handleSelectLoan}
-                onNewLoan={handleNewLoan}
                 onQuickPayment={(loan) => handleOpenPaymentModal(loan)}
+                onNewLoan={handleNewLoan}
               />
             )}
           </>
@@ -223,35 +258,41 @@ export default function App() {
 
       {/* Global Modals */}
       {/* 1. Payment Modal */}
-      <PaymentModal
-        isOpen={isPaymentModalOpen}
-        onClose={() => setIsPaymentModalOpen(false)}
-        loan={paymentTargetLoan}
-        installmentNumberToPay={paymentTargetInstallmentNum}
-        companySettings={companySettings}
-        onPaymentSuccess={handlePaymentSuccess}
-        allLoans={loans}
-      />
+      {isPaymentModalOpen && paymentTargetLoan && (
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setIsPaymentModalOpen(false)}
+          loan={paymentTargetLoan}
+          installmentNumberToPay={paymentTargetInstallmentNum}
+          companySettings={companySettings}
+          onPaymentSuccess={handlePaymentSuccess}
+          allLoans={loans}
+        />
+      )}
 
       {/* 2. Ticket / Receipt Printer Modal */}
-      <TicketModal
-        isOpen={isTicketModalOpen}
-        onClose={() => setIsTicketModalOpen(false)}
-        payment={ticketPaymentRecord}
-        loan={ticketLoanTarget}
-        companySettings={companySettings}
-        type={ticketType}
-      />
+      {isTicketModalOpen && (
+        <TicketModal
+          isOpen={isTicketModalOpen}
+          onClose={() => setIsTicketModalOpen(false)}
+          payment={ticketPaymentRecord}
+          loan={ticketLoanTarget}
+          companySettings={companySettings}
+          type={ticketType}
+        />
+      )}
 
       {/* 3. Settings & Backup Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        settings={companySettings}
-        onSaveSettings={handleSaveSettings}
-        allLoans={loans}
-        onReloadLoans={(newLoans) => setLoans(newLoans)}
-      />
+      {isSettingsOpen && (
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          settings={companySettings}
+          onSaveSettings={handleSaveSettings}
+          allLoans={loans}
+          onReloadLoans={(newLoans) => setLoans(newLoans)}
+        />
+      )}
     </div>
   );
 }

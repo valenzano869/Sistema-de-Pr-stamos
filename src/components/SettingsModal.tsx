@@ -115,8 +115,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="space-y-3">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
               <Building className="w-4 h-4 text-blue-600" />
-              <span>Identidad del Negocio / Financiera</span>
+              <span>Identidad del Negocio y Logotipo</span>
             </h4>
+
+            {/* Brand Logo & Favicon Preview */}
+            <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white p-1 rounded-xl border border-slate-200 shadow-xs flex items-center justify-center shrink-0">
+                  <img
+                    src={formData.logoUrl || '/logo.svg'}
+                    alt="Logo preview"
+                    className="w-full h-full object-contain"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-800">Logotipo Institucional</p>
+                  <p className="text-[11px] text-slate-500">Préstamos Fácil · Crédito Rápido y Sencillo</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, logoUrl: '/logo.svg' })}
+                className="px-2.5 py-1 text-[11px] font-semibold text-blue-700 hover:bg-blue-100/60 rounded-lg transition-colors border border-blue-200 bg-white"
+              >
+                Restablecer Logo
+              </button>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -222,7 +247,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div className="space-y-3 pt-3 border-t border-slate-200">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center space-x-1.5">
               <Printer className="w-4 h-4 text-indigo-600" />
-              <span>Personalización de Tickets Térmicos</span>
+              <span>Personalización de Documentos (A4)</span>
             </h4>
 
             <div>
@@ -235,7 +260,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Leyenda Legal / Aviso Oficial</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Leyenda Legal / Términos de Aclaración</label>
               <input
                 type="text"
                 value={formData.ticketNotice}

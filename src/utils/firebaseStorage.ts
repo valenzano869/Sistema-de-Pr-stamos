@@ -1,4 +1,4 @@
-import { doc, setDoc, onSnapshot, collection } from 'firebase/firestore';
+import { doc, setDoc, deleteDoc, onSnapshot, collection } from 'firebase/firestore';
 import { db, loansCollection, settingsCollection } from './firebase';
 import { Loan, CompanySettings } from '../types';
 import { syncLoanStatusWithCurrentDate } from './finance';
@@ -7,6 +7,7 @@ import { DEFAULT_COMPANY_SETTINGS } from './storage';
 const SETTINGS_DOC_ID = 'company-settings';
 
 export function subscribeToLoans(callback: (loans: Loan[]) => void) {
+
   return onSnapshot(loansCollection, (snapshot) => {
     const loans = snapshot.docs.map(doc => {
       const data = doc.data() as Loan;
@@ -42,4 +43,9 @@ export async function saveSettingsToFirebase(settings: CompanySettings) {
   const docRef = doc(settingsCollection, SETTINGS_DOC_ID);
   const cleanSettings = JSON.parse(JSON.stringify(settings));
   await setDoc(docRef, cleanSettings);
+}
+
+export async function deleteLoanFromFirebase(loanId: string) {
+  const docRef = doc(loansCollection, loanId);
+  await deleteDoc(docRef);
 }

@@ -9,11 +9,13 @@ import {
   FileText,
   AlertCircle,
   CheckCircle2,
+  Check,
   Share2,
   ShieldCheck,
   Building,
   CreditCard,
   Percent,
+  Trash2,
 } from 'lucide-react';
 import { CompanySettings, Installment, Loan, PaymentRecord } from '../types';
 import { formatCurrency, formatDate } from '../utils/finance';
@@ -24,6 +26,7 @@ interface LoanDetailProps {
   onBack: () => void;
   onOpenPaymentModal: (installmentNumber?: number) => void;
   onOpenTicketModal: (payment?: PaymentRecord, type?: 'payment' | 'loan_agreement') => void;
+  onDeleteLoan?: (loanId: string) => void;
 }
 
 export const LoanDetail: React.FC<LoanDetailProps> = ({
@@ -32,8 +35,20 @@ export const LoanDetail: React.FC<LoanDetailProps> = ({
   onBack,
   onOpenPaymentModal,
   onOpenTicketModal,
+  onDeleteLoan,
 }) => {
   const currency = companySettings.currency || '$';
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
+  const [deleteConfirmationText, setDeleteConfirmationText] = React.useState('');
+
+  const [copiedLink, setCopiedLink] = React.useState(false);
+
+  const handleCopyShareLink = () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2500);
+  };
 
   // Compute stats
   const totalInstallments = loan.installments.length;
@@ -98,12 +113,33 @@ export const LoanDetail: React.FC<LoanDetailProps> = ({
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
+            onClick={handleCopyShareLink}
+            className="inline-flex items-center space-x-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
+            title="Copiar enlace directo a este préstamo"
+          >
+            {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4 text-slate-500" />}
+            <span>{copiedLink ? 'Enlace Copiado' : 'Compartir'}</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => onOpenTicketModal(undefined, 'loan_agreement')}
             className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
           >
             <FileText className="w-4 h-4" />
             <span>Pagaré / Contrato</span>
           </button>
+
+          {onDeleteLoan && (
+            <button
+              type="button"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              className="inline-flex items-center space-x-1.5 px-3.5 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-semibold transition-colors border border-red-100"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Eliminar</span>
+            </button>
+          )}
 
           {loan.status !== 'paid' && (
             <button
@@ -418,6 +454,69 @@ export const LoanDetail: React.FC<LoanDetailProps> = ({
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteDialogOpen && onDeleteLoan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col">
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center space-x-3">
+              <div className="bg-red-100 p-2 rounded-full">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Eliminar Préstamo</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Esta acción no se puede deshacer.</p>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-slate-700">
+                Estás a punto de eliminar permanentemente el préstamo <strong className="text-slate-900">{loan.loanCode}</strong> de <strong className="text-slate-900">{loan.customer.fullName}</strong>.
+              </p>
+              <div className="space-y-2">
+                <label className="block text-xs font-semibold text-slate-700">
+                  Para confirmar, escribe la palabra <strong className="text-red-600 select-all">ELIMINAR</strong>
+                </label>
+                <input
+                  type="text"
+                  value={deleteConfirmationText}
+                  onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:bg-white outline-none transition-all"
+                  placeholder="Escribe ELIMINAR"
+                  autoComplete="off"
+                />
+              </div>
+            </div>
+
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end space-x-3 rounded-b-2xl">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsDeleteDialogOpen(false);
+                  setDeleteConfirmationText('');
+                }}
+                className="px-5 py-2.5 text-slate-600 hover:text-slate-900 font-semibold text-sm transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (deleteConfirmationText === 'ELIMINAR') {
+                    onDeleteLoan(loan.id);
+                  }
+                }}
+                disabled={deleteConfirmationText !== 'ELIMINAR'}
+                className="inline-flex items-center space-x-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition-all"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Sí, Eliminar Permanentemente</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+

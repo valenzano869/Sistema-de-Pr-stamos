@@ -17,7 +17,6 @@ interface NavbarProps {
   onTabChange: (tab: ActiveTab) => void;
   companySettings: CompanySettings;
   onOpenSettings: () => void;
-  onNewLoan: () => void;
   overdueCount: number;
 }
 
@@ -26,7 +25,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   companySettings,
   onOpenSettings,
-  onNewLoan,
   overdueCount,
 }) => {
   return (
@@ -35,18 +33,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center justify-between h-16 gap-4">
           {/* Brand Logo & Name */}
           <div
-            className="flex items-center space-x-3 cursor-pointer group"
+            className="flex items-center space-x-3 cursor-pointer group select-none"
             onClick={() => onTabChange('loans')}
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              <Banknote className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-white/5 border border-white/10 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform flex items-center justify-center p-0.5">
+              <img
+                src="/favicon.svg"
+                alt="Logo Préstamos Fácil"
+                className="w-full h-full object-contain rounded-lg"
+                referrerPolicy="no-referrer"
+              />
             </div>
             <div>
-              <h1 className="font-bold text-base tracking-tight text-white leading-tight">
+              <h1 className="font-extrabold text-base tracking-tight text-white leading-tight">
                 {companySettings.name}
               </h1>
               <p className="text-[11px] text-slate-400 font-medium">
-                Control de Préstamos & Impresión de Tickets
+                Crédito Rápido y Sencillo
               </p>
             </div>
           </div>
@@ -113,15 +116,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Buttons */}
           <div className="flex items-center space-x-2.5">
-            <button
-              type="button"
-              onClick={onNewLoan}
-              className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow-md hover:shadow-lg transition-all"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Nuevo Préstamo</span>
-            </button>
-
             <button
               type="button"
               onClick={onOpenSettings}

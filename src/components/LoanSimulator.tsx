@@ -115,7 +115,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({
             <input
               type="range"
               min="1000"
-              max="100000"
+              max="1000000"
               step="500"
               value={principal}
               onChange={(e) => setPrincipal(Number(e.target.value))}
@@ -123,7 +123,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({
             />
             <div className="flex justify-between text-[10px] text-slate-400">
               <span>{currency} 1,000</span>
-              <span>{currency} 100,000</span>
+              <span>{currency} 1,000,000</span>
             </div>
           </div>
 
@@ -136,7 +136,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({
             <input
               type="range"
               min="5"
-              max="150"
+              max="250"
               step="1"
               value={annualRate}
               onChange={(e) => setAnnualRate(Number(e.target.value))}
@@ -145,7 +145,7 @@ export const LoanSimulator: React.FC<LoanSimulatorProps> = ({
             <div className="flex justify-between text-[10px] text-slate-400">
               <span>5%</span>
               <span className="text-blue-600 font-semibold">{(annualRate / 12).toFixed(2)}% mensual</span>
-              <span>150%</span>
+              <span>250%</span>
             </div>
           </div>
 

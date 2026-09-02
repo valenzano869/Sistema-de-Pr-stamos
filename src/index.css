@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @layer utilities {
-  /* Print styling for thermal tickets and receipts */
+  /* Print styling for tickets */
   @media print {
     body * {
       visibility: hidden;
@@ -13,16 +13,17 @@
       position: absolute;
       left: 0;
       top: 0;
-      width: 80mm;
+      width: 100%;
       margin: 0;
-      padding: 4mm;
+      padding: 0;
       background: white !important;
       color: black !important;
       box-shadow: none !important;
+      border: none !important;
     }
     @page {
-      margin: 0;
-      size: auto;
+      margin: 1.5cm;
+      size: A4 portrait;
     }
   }
 }
