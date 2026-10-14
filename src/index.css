@@ -1,31 +1,129 @@
 @import "tailwindcss";
 
 @layer utilities {
-  /* Print styling for tickets */
+  /* Print styling for tickets and documents */
   @media print {
-    body * {
-      visibility: hidden;
+    /* 1. Hide non-printable app navigation, background layout, and modal chrome */
+    header,
+    main,
+    nav,
+    aside,
+    footer,
+    .no-print,
+    .print-hide {
+      display: none !important;
     }
-    #printable-ticket, #printable-ticket * {
-      visibility: visible;
+
+    /* 2. Reset html, body, and root containers so they don't offset or clip */
+    html,
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+    }
+
+    #root,
+    .min-h-screen {
+      margin: 0 !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
+      position: static !important;
+      display: block !important;
+      overflow: visible !important;
+      background: #ffffff !important;
+    }
+
+    /* 3. Reset all modal wrapper hierarchy to static in-flow */
+    .print-modal-overlay {
+      position: static !important;
+      inset: auto !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: visible !important;
+      height: auto !important;
+      min-height: 0 !important;
+      max-height: none !important;
+      display: block !important;
+      backdrop-filter: none !important;
+      z-index: auto !important;
+    }
+
+    .print-modal-card {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+      background: transparent !important;
+    }
+
+    .print-modal-scroll {
+      position: static !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      max-height: none !important;
+      height: auto !important;
+      overflow: visible !important;
+      display: block !important;
+      background: transparent !important;
+    }
+
+    /* 4. The printed document itself */
+    #printable-ticket {
+      position: static !important;
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: #ffffff !important;
+      color: #0f172a !important;
+      box-shadow: none !important;
+      border: none !important;
+      overflow: visible !important;
+    }
+
+    /* 5. Force exact color reproduction and borders */
+    * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
-    #printable-ticket {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      margin: 0;
-      padding: 0;
-      background: white !important;
-      color: black !important;
-      box-shadow: none !important;
-      border: none !important;
-    }
+
+    /* 6. Standard A4 geometry with balanced margins */
     @page {
-      margin: 1.5cm;
+      margin: 10mm 12mm;
       size: A4 portrait;
+    }
+
+    /* 7. Pagination safeguards: prevent dividing cards, rows, or signatures */
+    .print-avoid-break,
+    tr,
+    thead,
+    tfoot,
+    .print-hero-cards,
+    .print-signatures,
+    .print-notice {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    tfoot {
+      display: table-footer-group;
     }
   }
 }

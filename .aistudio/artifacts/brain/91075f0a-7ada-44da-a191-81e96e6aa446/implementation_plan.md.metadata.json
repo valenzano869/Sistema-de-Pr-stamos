@@ -1,0 +1,6 @@
+{
+  "summary": "Plan de implementación para rediseñar el documento de Resumen de Préstamo y Plan de Pagos orientado al cliente: eliminación del desglose confuso de capital/interés, adición de métricas clave (cuotas faltantes, fecha de próximo vencimiento, monto por cuota, saldo total), tabla limpia con columnas acordadas y optimización para impresión térmica y de hoja completa.",
+  "updatedAt": "2026-10-14T22:31:40.431685125Z",
+  "requestFeedback": true,
+  "userFacing": true
+}
