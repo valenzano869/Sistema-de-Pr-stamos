@@ -23,7 +23,13 @@ export function subscribeToSettings(callback: (settings: CompanySettings) => voi
   const docRef = doc(settingsCollection, SETTINGS_DOC_ID);
   return onSnapshot(docRef, (snapshot) => {
     if (snapshot.exists()) {
-      callback({ ...DEFAULT_COMPANY_SETTINGS, ...snapshot.data() } as CompanySettings);
+      const data = { ...DEFAULT_COMPANY_SETTINGS, ...snapshot.data() } as CompanySettings;
+      // Guarantee official institutional logo if missing or pointing to legacy external placeholder
+      if (!data.logoUrl || data.logoUrl.includes('unsplash.com')) {
+        data.logoUrl = '/logo.svg';
+        setDoc(docRef, { logoUrl: '/logo.svg' }, { merge: true }).catch(console.error);
+      }
+      callback(data);
     } else {
       callback(DEFAULT_COMPANY_SETTINGS);
       // Initialize if missing

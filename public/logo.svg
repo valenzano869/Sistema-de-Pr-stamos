@@ -1,129 +1,334 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="100%" height="100%">
   <defs>
-    <!-- Gradients for Gold Key and Elements -->
-    <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFE082"/>
-      <stop offset="35%" stop-color="#FFCA28"/>
-      <stop offset="70%" stop-color="#FFA000"/>
+    <!-- Soft 3D Drop Shadows -->
+    <filter id="softShadow" x="-15%" y="-15%" width="135%" height="135%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#0A2540" flood-opacity="0.14"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0A2540" flood-opacity="0.08"/>
+    </filter>
+
+    <filter id="badgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#E91E63" flood-opacity="0.35"/>
+    </filter>
+
+    <!-- Golden Key Gradients -->
+    <linearGradient id="goldSurface" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF59D"/>
+      <stop offset="25%" stop-color="#FFD54F"/>
+      <stop offset="55%" stop-color="#FFB300"/>
+      <stop offset="85%" stop-color="#FF8F00"/>
       <stop offset="100%" stop-color="#E65100"/>
     </linearGradient>
 
-    <linearGradient id="logoGoldHighlight" x1="0%" y1="100%" x2="0%" y2="0%">
+    <linearGradient id="goldHighlight" x1="0%" y1="100%" x2="0%" y2="0%">
       <stop offset="0%" stop-color="#FFA000"/>
-      <stop offset="60%" stop-color="#FFD54F"/>
-      <stop offset="100%" stop-color="#FFF9C4"/>
+      <stop offset="50%" stop-color="#FFE082"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
     </linearGradient>
 
-    <!-- Magenta / Pink Gradients -->
-    <linearGradient id="logoPink" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF2A7A"/>
-      <stop offset="50%" stop-color="#E91E63"/>
-      <stop offset="100%" stop-color="#C2185B"/>
+    <linearGradient id="goldBevel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF8F00"/>
+      <stop offset="50%" stop-color="#D87A00"/>
+      <stop offset="100%" stop-color="#8F4B00"/>
     </linearGradient>
 
-    <!-- Blue / Cyan Gradients -->
-    <linearGradient id="logoBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00C0FF"/>
-      <stop offset="50%" stop-color="#0072FF"/>
-      <stop offset="100%" stop-color="#0D47A1"/>
+    <!-- Magenta / Pink Torus & Chart Gradients -->
+    <linearGradient id="magentaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF3388"/>
+      <stop offset="40%" stop-color="#F50068"/>
+      <stop offset="80%" stop-color="#D80058"/>
+      <stop offset="100%" stop-color="#9E003E"/>
     </linearGradient>
 
-    <linearGradient id="logoNavy" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1E3A8A"/>
-      <stop offset="100%" stop-color="#0F172A"/>
+    <linearGradient id="magentaLight" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#FFA6CC"/>
+      <stop offset="50%" stop-color="#FF2E88"/>
+      <stop offset="100%" stop-color="#D00055"/>
     </linearGradient>
 
-    <!-- Soft Filter -->
-    <filter id="logoShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0A2540" flood-opacity="0.10"/>
-    </filter>
+    <!-- Deep Blue 3D Extrusion for Chart -->
+    <linearGradient id="chartDarkBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E2F68"/>
+      <stop offset="50%" stop-color="#081E48"/>
+      <stop offset="100%" stop-color="#030C20"/>
+    </linearGradient>
+
+    <!-- Cyan / Electric Blue Arrow Gradients -->
+    <linearGradient id="blueArrowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="35%" stop-color="#00A0FF"/>
+      <stop offset="70%" stop-color="#0066FF"/>
+      <stop offset="100%" stop-color="#003CBD"/>
+    </linearGradient>
+
+    <linearGradient id="blueArrowHighlight" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0070FF"/>
+      <stop offset="50%" stop-color="#38C8FF"/>
+      <stop offset="100%" stop-color="#D8F5FF"/>
+    </linearGradient>
   </defs>
 
-  <!-- Left Side: Graphic Symbol -->
-  <g transform="translate(40, 20)" filter="url(#logoShadow)">
+  <!-- GRAPHIC EMBLEM (Key, Chart, Ring, Blue Arrow) -->
+  <g filter="url(#softShadow)">
+
+    <!-- ========================================== -->
+    <!-- 1. ZIGZAG TRENDLINE CHART (Behind Key)     -->
+    <!-- ========================================== -->
     
-    <!-- 1. Rising Line Chart / Trendline (Behind) -->
-    <!-- Dark Blue Under-Stroke -->
-    <path d="M 160 300 L 220 220 L 270 248 L 330 160" 
-          fill="none" stroke="#003B95" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Magenta / Pink Top Stroke -->
-    <path d="M 160 300 L 220 220 L 270 248 L 330 160" 
-          fill="none" stroke="url(#logoPink)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
-    
-    <!-- Magenta Arrowhead at Top of Trendline -->
-    <polygon points="345,130 290,150 326,186" fill="url(#logoPink)"/>
+    <!-- Deep Navy Blue 3D Extrusion / Base Shadow of Chart -->
+    <path d="M 180 328 
+             L 272 198 
+             L 322 258 
+             L 392 152 
+             L 392 168 
+             L 322 274 
+             L 272 214 
+             L 180 344 Z" 
+          fill="url(#chartDarkBlue)"/>
 
-    <!-- 2. Circular 3D Ring / Lock (Upper Right of Emblem) -->
-    <!-- Pink & Blue Torus -->
-    <circle cx="390" cy="180" r="54" fill="none" stroke="url(#logoPink)" stroke-width="20"/>
-    <path d="M 390 126 A 54 54 0 0 1 444 180" fill="none" stroke="url(#logoBlue)" stroke-width="20" stroke-linecap="round"/>
+    <path d="M 172 320 
+             L 272 178 
+             L 326 242 
+             L 404 132 
+             L 404 148 
+             L 326 258 
+             L 272 194 
+             L 172 336 Z" 
+          fill="url(#chartDarkBlue)"/>
 
-    <!-- Dynamic Blue Arrow Swooshing Through the Ring -->
-    <path d="M 340 200 C 370 170 410 150 440 140" fill="none" stroke="url(#logoBlue)" stroke-width="14" stroke-linecap="round"/>
-    <polygon points="460,130 415,135 440,165" fill="url(#logoBlue)"/>
+    <!-- Navy Base for Arrowhead -->
+    <polygon points="432,94 366,128 376,140 404,142 414,170 426,164" fill="url(#chartDarkBlue)"/>
 
-    <!-- 3. The Golden Key with Dollar Sign Loop -->
-    <!-- Teardrop Key Loop at Bottom Left -->
-    <path d="M 230 330 C 230 385 185 410 135 410 C 85 410 50 365 50 315 C 50 260 95 240 145 240 C 195 240 230 280 230 330 Z"
-          fill="url(#logoGold)"/>
-    <!-- Inner cutout of key loop -->
-    <path d="M 195 330 C 195 365 165 385 135 385 C 105 385 85 355 85 315 C 85 275 110 265 145 265 C 175 265 195 295 195 330 Z"
-          fill="#FFFFFF"/>
+    <!-- Magenta / Pink Top Ribbon Face of Chart -->
+    <path d="M 172 316 
+             L 272 174 
+             L 326 238 
+             L 404 126
+             L 418 136
+             L 332 254
+             L 272 186
+             L 184 326 Z" 
+          fill="url(#magentaGrad)"/>
 
-    <!-- Golden Dollar Sign Inside Key Loop -->
-    <g transform="translate(135, 330) scale(0.9)">
-      <!-- Vertical Dollar bar -->
-      <rect x="-5" y="-45" width="10" height="90" rx="3" fill="url(#logoGold)"/>
-      <!-- S curve of Dollar -->
-      <path d="M 18 -20 C 18 -34 -2 -38 -14 -32 C -22 -28 -24 -18 -18 -10 C -12 -2 6 2 16 8 C 30 16 32 30 22 40 C 12 50 -10 50 -22 38 L -14 26 C -4 34 10 34 16 28 C 20 24 18 16 12 12 C 4 6 -12 2 -20 -4 C -30 -12 -28 -28 -18 -38 C -4 -48 22 -46 26 -30 Z" 
-            fill="url(#logoGold)"/>
+    <!-- Bright Pink Upper Edge Highlight of Chart -->
+    <path d="M 172 316 L 272 174 L 326 238 L 404 126" 
+          stroke="url(#magentaLight)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+    <!-- Chart Arrowhead: 3D Facets -->
+    <!-- Lower Bevel (Darker Magenta) -->
+    <polygon points="432,90 358,118 392,152" fill="#B30047"/>
+    <!-- Top Face (Vivid Pink Gradient) -->
+    <polygon points="432,90 358,118 418,138" fill="url(#magentaLight)"/>
+    <!-- Right Bevel -->
+    <polygon points="432,90 418,138 392,152" fill="url(#magentaGrad)"/>
+
+
+    <!-- ========================================== -->
+    <!-- 2. PINK / FUCHSIA 3D TORUS RING            -->
+    <!-- ========================================== -->
+    <!-- Back Rim of Ring (passes behind key) -->
+    <g transform="translate(540, 168) rotate(-15)">
+      <!-- Outer Ring Silhouette -->
+      <path d="M 0,-56 
+               C 31,-56 56,-31 56,0 
+               C 56,31 31,56 0,56 
+               C -31,56 -56,31 -56,0 
+               C -56,-31 -31,-56 0,-56 Z
+               M 0,-30 
+               C -16,-30 -30,-16 -30,0 
+               C -30,16 -16,30 0,30 
+               C 16,30 30,16 30,0 
+               C 30,-16 16,-30 0,-30 Z" 
+            fill="url(#magentaGrad)"/>
+      
+      <!-- Top Specular Highlight Arc on Ring -->
+      <path d="M -40,-35 C -20,-52 20,-52 40,-35" 
+            stroke="#FFAECE" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.85"/>
+      
+      <!-- Inner Ring Bevel Shadow -->
+      <circle cx="0" cy="0" r="30" stroke="#7A0033" stroke-width="3.5" fill="none" opacity="0.6"/>
     </g>
 
-    <!-- Golden Key Shaft Leading Upward to the Ring -->
-    <path d="M 195 310 C 240 280 320 220 380 190 L 395 205 C 330 240 250 295 210 330 Z"
-          fill="url(#logoGold)"/>
-    <!-- Key Shaft Highlight -->
-    <path d="M 195 310 C 240 280 320 220 380 190 L 385 195 C 325 225 245 285 200 315 Z"
-          fill="url(#logoGoldHighlight)"/>
-  </g>
 
-  <!-- Right Side: Brand Typography & Slogan -->
-  <g transform="translate(480, 240)">
-    <!-- PRESTAMOS -->
+    <!-- ========================================== -->
+    <!-- 3. DYNAMIC BLUE ARROW (Through the Ring)   -->
+    <!-- ========================================== -->
+    <!-- Blue Arrow Body swooping upward through ring -->
+    <path d="M 488 184 
+             C 514 176 546 164 578 148 
+             C 592 140 606 132 618 122
+             L 608 114
+             C 586 130 558 144 528 156
+             C 506 164 488 170 478 174 Z" 
+          fill="url(#blueArrowGrad)"/>
+
+    <!-- Blue Arrow Top 3D Facet -->
+    <path d="M 488 180 
+             C 518 170 554 154 590 134 
+             L 604 122 
+             L 582 136 
+             C 550 152 516 166 488 174 Z" 
+          fill="url(#blueArrowHighlight)"/>
+
+    <!-- Blue Arrowhead pointing Upper-Right -->
+    <!-- Bottom Shadow Bevel -->
+    <polygon points="636,104 564,124 598,158" fill="#003DAA"/>
+    <!-- Main Highlight Face -->
+    <polygon points="636,104 564,124 614,136" fill="url(#blueArrowHighlight)"/>
+    <!-- Right Bevel -->
+    <polygon points="636,104 614,136 598,158" fill="url(#blueArrowGrad)"/>
+    <!-- Sharp Tip Highlight -->
+    <line x1="636" y1="104" x2="598" y2="158" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+
+    <!-- ========================================== -->
+    <!-- 4. GOLDEN KEY WITH DOLLAR SIGN LOOP        -->
+    <!-- ========================================== -->
+
+    <!-- 4A. Outer 3D Bevel / Shadow of Key Handle & Shaft -->
+    <path d="M 238 316 
+             C 238 254 286 218 348 244 
+             C 386 260 448 206 524 162 
+             L 538 180 
+             C 456 226 392 284 354 266 
+             C 304 244 268 274 268 322 
+             C 268 376 312 406 366 384 
+             C 392 374 412 346 412 316 
+             L 436 322 
+             C 436 366 406 404 366 418 
+             C 288 444 238 392 238 316 Z" 
+          fill="url(#goldBevel)"/>
+
+    <!-- 4B. Main Front Face of Golden Key Handle & Shaft -->
+    <path d="M 244 314 
+             C 244 258 290 224 348 248 
+             C 388 264 452 210 532 164 
+             L 542 176 
+             C 460 222 396 278 354 260 
+             C 308 240 274 270 274 318 
+             C 274 368 316 398 366 376 
+             C 390 366 408 340 408 312 
+             L 428 318 
+             C 428 358 402 394 364 408 
+             C 292 432 244 384 244 314 Z" 
+          fill="url(#goldSurface)"/>
+
+    <!-- 4C. Key Inner Teardrop Hole with Ambient Depth -->
+    <path d="M 284 320 
+             C 284 286 310 264 344 278 
+             C 370 288 386 320 386 348 
+             C 386 374 364 390 338 382 
+             C 308 372 284 350 284 320 Z" 
+          fill="#FFFFFF" opacity="0.95"/>
+
+    <!-- Inner Shadow Rim around the hole -->
+    <path d="M 284 320 
+             C 284 286 310 264 344 278 
+             C 370 288 386 320 386 348 
+             C 386 374 364 390 338 382 
+             C 308 372 284 350 284 320 Z" 
+          fill="none" stroke="#D87A00" stroke-width="5" opacity="0.35"/>
+
+    <!-- 4D. Brilliant Specular Highlight along Key Shaft -->
+    <path d="M 346 250 
+             C 388 266 452 212 532 166" 
+          fill="none" stroke="url(#goldHighlight)" stroke-width="4.5" stroke-linecap="round"/>
+
+    <path d="M 250 310 
+             C 250 264 288 234 342 254" 
+          fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.75"/>
+
+
+    <!-- ========================================== -->
+    <!-- 5. 3D GOLDEN DOLLAR SIGN ($) IN KEY LOOP   -->
+    <!-- ========================================== -->
+    <g transform="translate(332, 332)">
+      <!-- Vertical Spine Bar 3D Shadow -->
+      <rect x="-4.5" y="-45" width="11" height="92" rx="3.5" fill="url(#goldBevel)"/>
+      <!-- Vertical Spine Bar Front -->
+      <rect x="-3" y="-44" width="8" height="90" rx="3" fill="url(#goldSurface)"/>
+      <!-- Bar Top Highlight -->
+      <line x1="1" y1="-43" x2="1" y2="44" stroke="#FFF9C4" stroke-width="1.8"/>
+
+      <!-- 3D Dollar S-Curve Shadow / Bevel -->
+      <path d="M 18 -18 
+               C 18 -32 -2 -37 -14 -31 
+               C -22 -27 -24 -17 -18 -9 
+               C -12 -1 6 3 16 9 
+               C 30 17 32 31 22 41 
+               C 12 51 -10 51 -22 39 
+               L -14 27 
+               C -4 35 10 35 16 29 
+               C 20 25 18 17 12 13 
+               C 4 7 -12 3 -20 -3 
+               C -30 -11 -28 -27 -18 -37 
+               C -4 -47 22 -45 26 -29 Z" 
+            fill="url(#goldBevel)" transform="translate(1.5, 1.5)"/>
+
+      <!-- 3D Dollar S-Curve Front Surface -->
+      <path d="M 18 -18 
+               C 18 -32 -2 -37 -14 -31 
+               C -22 -27 -24 -17 -18 -9 
+               C -12 -1 6 3 16 9 
+               C 30 17 32 31 22 41 
+               C 12 51 -10 51 -22 39 
+               L -14 27 
+               C -4 35 10 35 16 29 
+               C 20 25 18 17 12 13 
+               C 4 7 -12 3 -20 -3 
+               C -30 -11 -28 -27 -18 -37 
+               C -4 -47 22 -45 26 -29 Z" 
+            fill="url(#goldSurface)"/>
+
+      <!-- Specular Highlight Glint on Upper Dollar Curve -->
+      <path d="M 22 -25 C 18 -38 0 -40 -12 -33" 
+            fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+    </g>
+
+  </g> <!-- End Graphic Emblem -->
+
+
+  <!-- ========================================== -->
+  <!-- 6. CORPORATE TYPOGRAPHY & SLOGAN           -->
+  <!-- ========================================== -->
+  <g transform="translate(422, 292)">
+    
+    <!-- "PRESTAMOS" - Deep Corporate Navy -->
     <text x="0" y="0" 
-          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Montserrat, sans-serif" 
+          font-family="system-ui, -apple-system, 'Montserrat', 'Segoe UI', Roboto, sans-serif" 
           font-size="78" 
           font-weight="900" 
           letter-spacing="-0.5px" 
-          fill="#0D2E68">
+          fill="#0A3871">
       PRESTAMOS
     </text>
 
-    <!-- FACIL -->
-    <text x="0" y="76" 
-          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Montserrat, sans-serif" 
-          font-size="86" 
+    <!-- "FACIL" - Solid Bold Heavy Navy -->
+    <text x="0" y="80" 
+          font-family="system-ui, -apple-system, 'Montserrat', 'Segoe UI', Roboto, sans-serif" 
+          font-size="88" 
           font-weight="900" 
-          letter-spacing="1px" 
-          fill="#0045A5">
+          letter-spacing="0.5px" 
+          fill="#0A3871">
       FACIL
     </text>
 
-    <!-- CRÉDITO RÁPIDO Y SENCILLO -->
-    <text x="0" y="125" 
-          font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Montserrat, sans-serif" 
-          font-size="20" 
+    <!-- "CRÉDITO RÁPIDO Y SENCILLO" -->
+    <text x="0" y="130" 
+          font-family="system-ui, -apple-system, 'Montserrat', 'Segoe UI', Roboto, sans-serif" 
+          font-size="20.5" 
           font-weight="800" 
           letter-spacing="2.8px" 
-          fill="#0D2E68">
+          fill="#0A3871">
       CRÉDITO RÁPIDO Y SENCILLO
     </text>
 
-    <!-- Pink Circular Checkmark Badge at end of Subtitle -->
-    <g transform="translate(408, 118)">
-      <circle cx="0" cy="0" r="14" fill="url(#logoPink)"/>
-      <path d="M -5 0 L -1 4 L 6 -4" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Pink Circular Badge with White Checkmark -->
+    <g transform="translate(418, 123)" filter="url(#badgeShadow)">
+      <circle cx="0" cy="0" r="14.5" fill="url(#magentaGrad)"/>
+      <circle cx="0" cy="0" r="14.5" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.5"/>
+      <path d="M -5.5 0 L -1.5 4.5 L 6.5 -3.5" 
+            fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
     </g>
   </g>
+
 </svg>

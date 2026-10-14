@@ -1,129 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
   <defs>
-    <!-- Background shadow -->
-    <filter id="cardShadow" x="-10%" y="-10%" width="130%" height="130%">
-      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#0F172A" flood-opacity="0.12"/>
-      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#0F172A" flood-opacity="0.08"/>
-    </filter>
-
-    <filter id="iconGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="2" dy="8" stdDeviation="10" flood-color="#E67E00" flood-opacity="0.3"/>
-    </filter>
+    <!-- Background squircle -->
+    <linearGradient id="favBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F2B5C"/>
+      <stop offset="100%" stop-color="#071738"/>
+    </linearGradient>
 
     <!-- Gold Gradients -->
-    <linearGradient id="goldLight" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFF3B0"/>
-      <stop offset="35%" stop-color="#FFCA28"/>
-      <stop offset="70%" stop-color="#FFA000"/>
+    <linearGradient id="favGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF59D"/>
+      <stop offset="30%" stop-color="#FFCA28"/>
+      <stop offset="70%" stop-color="#FF9800"/>
       <stop offset="100%" stop-color="#E65100"/>
     </linearGradient>
 
-    <linearGradient id="goldHighlight" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" stop-color="#FFA000"/>
-      <stop offset="50%" stop-color="#FFD54F"/>
-      <stop offset="100%" stop-color="#FFF9C4"/>
+    <!-- Magenta Gradient -->
+    <linearGradient id="favPink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF3388"/>
+      <stop offset="60%" stop-color="#E91E63"/>
+      <stop offset="100%" stop-color="#AD1457"/>
     </linearGradient>
 
-    <linearGradient id="goldDarkBevel" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFB300"/>
-      <stop offset="100%" stop-color="#B26A00"/>
-    </linearGradient>
-
-    <!-- Arrow Magenta & Blue Facet Gradients -->
-    <linearGradient id="arrowMagenta" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF2A7A"/>
-      <stop offset="100%" stop-color="#D81B60"/>
-    </linearGradient>
-
-    <linearGradient id="arrowBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00C0FF"/>
-      <stop offset="100%" stop-color="#0066FF"/>
-    </linearGradient>
-
-    <!-- Subtle background geometric grid -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFFFFF"/>
-      <stop offset="100%" stop-color="#F4F7FC"/>
+    <!-- Cyan / Blue Gradient -->
+    <linearGradient id="favBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="50%" stop-color="#0080FF"/>
+      <stop offset="100%" stop-color="#0044BB"/>
     </linearGradient>
   </defs>
 
-  <!-- Squircle Base with Soft Shadow -->
-  <rect x="36" y="36" width="440" height="440" rx="100" fill="url(#bgGrad)" filter="url(#cardShadow)"/>
-  
-  <!-- Subtle tech hexagon lines in background -->
-  <g stroke="#E2E8F0" stroke-width="1.5" fill="none" opacity="0.6">
-    <path d="M 400 40 L 440 64 L 440 110 L 400 134 L 360 110 L 360 64 Z"/>
-    <path d="M 440 110 L 480 134 L 480 180 L 440 204 L 400 180 L 400 134 Z"/>
-    <path d="M 72 380 L 112 404 L 112 450 L 72 474 L 32 450 L 32 404 Z"/>
-    <path d="M 112 334 L 152 358 L 152 404 L 112 428 L 72 404 L 72 358 Z"/>
-  </g>
+  <!-- Squircle Base -->
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#favBg)"/>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="none" stroke="#2563EB" stroke-width="2.5" opacity="0.4"/>
 
-  <!-- Rounded frame inner outline -->
-  <rect x="36" y="36" width="440" height="440" rx="100" fill="none" stroke="#FFFFFF" stroke-width="4" opacity="0.8"/>
-
-  <!-- MAIN EMBLEM: 3D Dollar Sign + Rising Arrow -->
-  <g filter="url(#iconGlow)">
-    <!-- Vertical Dollar Spine Bar (Back layer) -->
-    <path d="M 218 90 L 254 90 L 254 135 L 218 135 Z" fill="url(#goldLight)"/>
-    <path d="M 218 360 L 254 360 L 254 415 L 218 415 Z" fill="url(#goldLight)"/>
-
-    <!-- 3D Lower Bar bevel -->
-    <path d="M 246 90 L 254 90 L 254 135 L 246 135 Z" fill="url(#goldDarkBevel)"/>
-    <path d="M 246 360 L 254 360 L 254 415 L 246 415 Z" fill="url(#goldDarkBevel)"/>
-
-    <!-- Upper Curve of Dollar Sign with Accent Highlights -->
-    <path d="M 288 136 C 240 136 172 152 172 208 C 172 250 208 268 256 280 L 284 288 C 324 298 348 312 348 338 C 348 376 304 388 250 388 C 196 388 152 368 140 330 L 100 346 C 118 402 178 424 236 424 L 236 440 L 254 440 L 254 424 C 314 422 390 404 390 334 C 390 286 352 264 300 252 L 272 244 C 238 234 214 224 214 198 C 214 172 246 164 282 164 C 324 164 358 178 372 204 L 406 182 C 382 148 334 136 288 136 Z" fill="none"/>
-
-    <!-- The 3D Dollar '$' Body Structure -->
-    <!-- Top Arc -->
-    <path d="M 292 135 C 230 135 170 156 170 216 C 170 262 208 284 258 296 L 270 300 C 230 332 200 372 200 372 C 180 372 160 364 148 344 L 112 364 C 134 406 184 416 236 416 L 236 376 C 298 376 356 358 356 318 C 356 294 340 274 316 262 L 316 262" fill="none"/>
-
-    <!-- Complete Clean 3D Dollar Geometry -->
-    <!-- Upper Body Arc -->
-    <path d="M 296 136 C 248 136 176 156 176 216 C 176 262 216 280 262 292 L 284 298 C 300 284 320 268 344 248 C 318 240 220 224 220 196 C 220 174 250 166 286 166 C 330 166 364 182 376 212 L 416 190 C 394 150 346 136 296 136 Z"
-          fill="url(#goldLight)"/>
-
-    <!-- Upper Arc Color Reflection (Magenta and Cyan rim on top) -->
-    <path d="M 176 200 C 176 174 210 148 274 138 C 264 142 222 152 204 174 C 188 194 182 220 182 220 Z"
-          fill="url(#arrowMagenta)"/>
-    <path d="M 274 138 C 312 142 348 152 372 170 C 362 162 334 148 300 144 Z"
-          fill="url(#arrowBlue)"/>
-
-    <!-- Lower Body Arc -->
-    <path d="M 276 296 C 254 302 236 312 220 326 C 204 340 192 358 192 378 C 192 396 208 408 236 412 L 236 364 C 274 362 344 350 344 312 C 344 294 330 280 306 270 L 276 296 Z"
-          fill="url(#goldLight)"/>
-
-    <!-- Bottom Left Loop -->
-    <path d="M 192 378 C 192 410 224 416 244 416 L 244 366 C 218 368 192 368 192 378 Z"
-          fill="url(#goldDarkBevel)"/>
-
-    <path d="M 236 416 C 184 416 138 396 122 354 L 160 336 C 170 364 200 378 236 380 L 236 416 Z"
-          fill="url(#goldLight)"/>
-
-    <!-- DYNAMIC ASCENDING ARROW (Emerging from Dollar Center) -->
-    <!-- Lower Arrow Stem / Joint from Dollar Center -->
-    <path d="M 248 290 L 370 178 L 396 204 L 278 316 Z"
-          fill="url(#goldLight)"/>
-
-    <!-- Arrow Shaft Top 3D Bevel (Bright Golden Highlight) -->
-    <path d="M 248 290 L 370 178 L 360 168 L 238 280 Z"
-          fill="url(#goldHighlight)"/>
-
-    <!-- Arrow Shaft Bottom Bevel (Gold Shadow) -->
-    <path d="M 278 316 L 396 204 L 406 214 L 288 326 Z"
-          fill="url(#goldDarkBevel)"/>
-
-    <!-- ARROWHEAD: Multi-Faceted 3D Gem Head (Points to Top-Right) -->
-    <!-- Top Bevel (Vivid Magenta / Pink) -->
-    <polygon points="410,108 312,130 366,184" fill="url(#arrowMagenta)"/>
+  <!-- Emblem Scaled & Centered -->
+  <g transform="translate(18, 12) scale(0.24)">
     
-    <!-- Right Bevel (Electric Cyan / Royal Blue) -->
-    <polygon points="410,108 366,184 392,210 390,208" fill="url(#arrowBlue)"/>
-    
-    <!-- Arrowhead Main Gold Face -->
-    <polygon points="410,108 348,166 366,184" fill="url(#goldLight)"/>
+    <!-- Chart Trendline -->
+    <path d="M 50 250 L 110 160 L 145 205 L 205 125" 
+          stroke="#002D7A" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M 50 250 L 110 160 L 145 205 L 205 125" 
+          stroke="url(#favPink)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <polygon points="225,95 180,120 205,145" fill="url(#favPink)"/>
 
-    <!-- Fine edge highlight on arrowhead point -->
-    <line x1="410" y1="108" x2="366" y2="184" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+    <!-- Pink Torus Ring -->
+    <circle cx="280" cy="140" r="38" fill="none" stroke="url(#favPink)" stroke-width="16"/>
+
+    <!-- Blue Arrow Swooping Through Ring -->
+    <path d="M 235 155 C 260 145 290 128 320 110" fill="none" stroke="url(#favBlue)" stroke-width="14" stroke-linecap="round"/>
+    <polygon points="340,90 295,108 318,132" fill="url(#favBlue)"/>
+
+    <!-- Golden Key Loop & Shaft -->
+    <path d="M 90 240 C 90 200 120 175 160 190 C 190 200 235 165 285 135 L 295 145 C 240 180 195 220 165 205 C 135 190 115 210 115 240 C 115 275 145 295 180 280 C 195 270 205 255 205 235 L 220 240 C 220 270 200 295 175 305 C 125 320 90 290 90 240 Z" 
+          fill="url(#favGold)"/>
+
+    <!-- Dollar sign in key loop -->
+    <g transform="translate(155, 250) scale(0.65)">
+      <rect x="-4" y="-35" width="8" height="70" rx="3" fill="url(#favGold)"/>
+      <path d="M 14 -14 C 14 -25 -2 -29 -11 -24 C -17 -21 -19 -13 -14 -7 C -9 -1 5 2 12 7 C 23 13 25 24 17 32 C 9 40 -8 40 -17 30 L -11 21 C -3 27 8 27 12 22 C 15 19 14 13 9 10 C 3 5 -9 2 -15 -2 C -23 -8 -21 -21 -14 -29 C -3 -37 17 -35 20 -23 Z" 
+            fill="url(#favGold)"/>
+    </g>
   </g>
 </svg>

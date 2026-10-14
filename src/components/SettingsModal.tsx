@@ -34,7 +34,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const [formData, setFormData] = useState<CompanySettings>({ ...settings });
+  const sanitizedInitialSettings: CompanySettings = {
+    ...settings,
+    logoUrl: (!settings.logoUrl || settings.logoUrl.includes('unsplash.com')) ? '/logo.svg' : settings.logoUrl,
+  };
+  const [formData, setFormData] = useState<CompanySettings>(sanitizedInitialSettings);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,7 +125,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             {/* Brand Logo & Favicon Preview */}
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-3">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white p-1 rounded-xl border border-slate-200 shadow-xs flex items-center justify-center shrink-0">
+                <div className="w-24 h-12 bg-white p-1 rounded-xl border border-slate-200 shadow-xs flex items-center justify-center shrink-0">
                   <img
                     src={formData.logoUrl || '/logo.svg'}
                     alt="Logo preview"

@@ -25,6 +25,9 @@ export const TicketModal: React.FC<TicketModalProps> = ({
   if (!isOpen || (!payment && !loan)) return null;
 
   const currency = companySettings.currency || '$';
+  const logoSrc = (!companySettings.logoUrl || companySettings.logoUrl.includes('unsplash.com'))
+    ? '/logo.svg'
+    : companySettings.logoUrl;
 
   const handlePrint = () => {
     window.print();
@@ -150,9 +153,9 @@ ${companySettings.ticketNotice}
               <div className="flex justify-between items-start border-b border-slate-200 pb-4 gap-4">
                 <div className="flex items-center space-x-4">
                   <img
-                    src={companySettings.logoUrl || '/logo.svg'}
+                    src={logoSrc}
                     alt="Logo Empresa"
-                    className="h-12 max-w-[180px] object-contain"
+                    className="h-14 max-w-[220px] object-contain"
                     referrerPolicy="no-referrer"
                   />
                   <div>

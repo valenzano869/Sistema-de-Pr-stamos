@@ -46,17 +46,6 @@ export default function App() {
     const unsubscribeLoans = subscribeToLoans((firebaseLoans) => {
       setLoans(firebaseLoans);
       setIsLoansLoaded(true);
-
-      // Check if URL has ?loan= or ?loanId= to open directly when sharing link
-      const params = new URLSearchParams(window.location.search);
-      const loanFromUrl = params.get('loan') || params.get('loanId');
-      if (loanFromUrl) {
-        const found = firebaseLoans.find((l) => l.id === loanFromUrl || l.loanCode.toLowerCase() === loanFromUrl.toLowerCase());
-        if (found) {
-          setSelectedLoanId(found.id);
-          setActiveTab('loans');
-        }
-      }
     });
 
     const unsubscribeSettings = subscribeToSettings((settings) => {
@@ -77,26 +66,15 @@ export default function App() {
   const handleSelectLoan = (loan: Loan) => {
     setSelectedLoanId(loan.id);
     setActiveTab('loans');
-    const url = new URL(window.location.href);
-    url.searchParams.set('loan', loan.loanCode);
-    window.history.replaceState({}, '', url.toString());
   };
 
   const handleBackToLoanList = () => {
     setSelectedLoanId(null);
-    const url = new URL(window.location.href);
-    url.searchParams.delete('loan');
-    url.searchParams.delete('loanId');
-    window.history.replaceState({}, '', url.toString());
   };
 
   const handleNewLoan = () => {
     setSelectedLoanId(null);
     setActiveTab('wizard');
-    const url = new URL(window.location.href);
-    url.searchParams.delete('loan');
-    url.searchParams.delete('loanId');
-    window.history.replaceState({}, '', url.toString());
   };
 
   const handleSaveNewLoan = async (newLoan: Loan) => {

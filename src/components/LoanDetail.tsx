@@ -9,8 +9,6 @@ import {
   FileText,
   AlertCircle,
   CheckCircle2,
-  Check,
-  Share2,
   ShieldCheck,
   Building,
   CreditCard,
@@ -40,15 +38,6 @@ export const LoanDetail: React.FC<LoanDetailProps> = ({
   const currency = companySettings.currency || '$';
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [deleteConfirmationText, setDeleteConfirmationText] = React.useState('');
-
-  const [copiedLink, setCopiedLink] = React.useState(false);
-
-  const handleCopyShareLink = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
-  };
 
   // Compute stats
   const totalInstallments = loan.installments.length;
@@ -111,16 +100,6 @@ export const LoanDetail: React.FC<LoanDetailProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            type="button"
-            onClick={handleCopyShareLink}
-            className="inline-flex items-center space-x-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors"
-            title="Copiar enlace directo a este préstamo"
-          >
-            {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4 text-slate-500" />}
-            <span>{copiedLink ? 'Enlace Copiado' : 'Compartir'}</span>
-          </button>
-
           <button
             type="button"
             onClick={() => onOpenTicketModal(undefined, 'loan_agreement')}
